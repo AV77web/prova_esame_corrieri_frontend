@@ -1,42 +1,48 @@
 // =================================================
-// File: Categorie.jsx
-// Componente per la gestione delle categorie di permesso
-// @author: Full Stack Senior Developer
-// @version: 1.0.0 2026-01-20
+// File: Clienti.jsx
+// Componente per la gestione dei clienti del corriere
 // =================================================
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../src/context/AuthContext';
 import {
-    getCategorie,
-    createCategoria,
-    updateCategoria,
-    deleteCategoria
+    getClienti,
+    createCliente,
+    updateCliente,
+    deleteCliente
 } from '../../src/services/api';
-import './Categorie.css';
+import './Clienti.css';
 
-const Categorie = () => {
+const Clienti = () => {
     const { user } = useAuth();
-    const [categorie, setCategorie] = useState([]);
+    const [clienti, setClienti] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [editMode, setEditMode] = useState(false);
-    const [currentCategoria, setCurrentCategoria] = useState(null);
+    const [currentCliente, setCurrentCliente] = useState(null);
     const [formData, setFormData] = useState({
-        categoriaId: '',
-        descrizione: ''
+        clienteId: '',
+        nominativo: ''
     });
 
-    // Carica le categorie
-    const loadCategorie = async () => {
+    const canGestireClienti =
+        !!user &&
+        (
+            user.admin === true ||
+            user.Admin === true ||
+            user.ruolo === 'Operatore' ||
+            user.ruolo === 'Amministratore'
+        );
+
+    const loadClienti = async () => {
         try {
             setLoading(true);
             setError(null);
-            const response = await getCategorie();
-            setCategorie(response.data || []);
+            const response = await getClienti();
+            setClienti(response.data || []);
         } catch (err) {
-            console.error('[CATEGORIE] Errore caricamento:', err);
+            console.error('[CLIENTI] Errore caricamento:', err);
             setError(err.message);
         } finally {
             setLoading(false);
@@ -44,107 +50,100 @@ const Categorie = () => {
     };
 
     useEffect(() => {
-        loadCategorie();
+        loadClienti();
     }, []);
 
-    // Apri modal per nuova categoria
     const handleOpenCreateModal = () => {
         setEditMode(false);
-        setCurrentCategoria(null);
-        setFormData({ categoriaId: '', descrizione: '' });
+        setCurrentCliente(null);
+        setFormData({ clienteId: '', nominativo: '' });
         setShowModal(true);
     };
 
-    // Apri modal per modifica
-    const handleOpenEditModal = (categoria) => {
+    const handleOpenEditModal = (cliente) => {
         setEditMode(true);
-        setCurrentCategoria(categoria);
+        setCurrentCliente(cliente);
         setFormData({
-            categoriaId: categoria.CategoriaID,
-            descrizione: categoria.Descrizione
+            clienteId: cliente.ClienteID,
+            nominativo: cliente.Nominativo
         });
         setShowModal(true);
     };
 
-    // Chiudi modal
     const handleCloseModal = () => {
         setShowModal(false);
         setEditMode(false);
-        setCurrentCategoria(null);
-        setFormData({ categoriaId: '', descrizione: '' });
+        setCurrentCliente(null);
+        setFormData({ clienteId: '', nominativo: '' });
     };
 
-    // Crea nuova categoria
     const handleCreate = async (e) => {
         e.preventDefault();
 
-        if (!formData.categoriaId || !formData.descrizione) {
+        if (!formData.clienteId || !formData.nominativo) {
             setError('Tutti i campi sono obbligatori');
             return;
         }
 
         try {
             setError(null);
-            await createCategoria({
-                categoriaId: parseInt(formData.categoriaId),
-                descrizione: formData.descrizione
+            await createCliente({
+                clienteId: parseInt(formData.clienteId, 10),
+                nominativo: formData.nominativo
             });
 
             handleCloseModal();
-            loadCategorie();
+            loadClienti();
         } catch (err) {
-            console.error('[CATEGORIE] Errore creazione:', err);
+            console.error('[CLIENTI] Errore creazione:', err);
             setError(err.message);
         }
     };
 
-    // Modifica categoria
     const handleUpdate = async (e) => {
         e.preventDefault();
 
-        if (!formData.descrizione) {
-            setError('La descrizione è obbligatoria');
+        if (!formData.nominativo) {
+            setError('Il nominativo è obbligatorio');
             return;
         }
 
         try {
             setError(null);
-            await updateCategoria(currentCategoria.CategoriaID, {
-                descrizione: formData.descrizione
+            await updateCliente(currentCliente.ClienteID, {
+                nominativo: formData.nominativo
             });
 
             handleCloseModal();
-            loadCategorie();
+            loadClienti();
         } catch (err) {
-            console.error('[CATEGORIE] Errore modifica:', err);
+            console.error('[CLIENTI] Errore modifica:', err);
             setError(err.message);
         }
     };
 
-    // Elimina categoria
     const handleDelete = async (id) => {
-        if (!window.confirm('Sei sicuro di voler eliminare questa categoria? Questa azione non può essere annullata.')) {
+        if (!window.confirm('Sei sicuro di voler eliminare questo cliente?')) {
             return;
         }
 
         try {
             setError(null);
-            await deleteCategoria(id);
-            loadCategorie();
+            await deleteCliente(id);
+            loadClienti();
         } catch (err) {
-            console.error('[CATEGORIE] Errore eliminazione:', err);
+            console.error('[CLIENTI] Errore eliminazione:', err);
             setError(err.message);
         }
     };
 
-    // Solo i Responsabili possono gestire le categorie
-    if (user?.ruolo !== 'Responsabile') {
+    if (!canGestireClienti) {
         return (
             <div className="categorie-container">
                 <div className="access-denied">
                     <div className="access-denied-icon">🔒</div>
                     <h2>Accesso Negato</h2>
-                    <p>Solo i Responsabili possono gestire le categorie di permesso.</p>
+                    <p>Solo gli operatori e gli amministratori possono gestire i clienti.</p>
                 </div>
             </div>
         );
@@ -155,7 +154,7 @@ const Categorie = () => {
             <div className="categorie-container">
                 <div className="loading-state">
                     <div className="spinner"></div>
-                    <p>Caricamento categorie...</p>
+                    <p>Caricamento clienti...</p>
                 </div>
             </div>
         );
@@ -163,57 +162,53 @@ const Categorie = () => {
 
     return (
         <div className="categorie-container">
-            {/* Header */}
             <div className="categorie-header">
                 <div className="header-content">
                     <div className="header-title">
-                        <span className="icon-title">🏷️</span>
-                        <h1>Gestione Categorie</h1>
+                        <span className="icon-title">👥</span>
+                        <h1>Gestione Clienti</h1>
                     </div>
                     <p className="header-subtitle">
-                        Crea, modifica ed elimina le categorie di permesso disponibili nel sistema.
+                        Crea, modifica ed elimina i clienti del corriere.
                     </p>
                 </div>
                 <button
                     className="btn-primary"
                     onClick={handleOpenCreateModal}
                 >
-                    + Nuova Categoria
+                    + Nuovo Cliente
                 </button>
             </div>
 
-            {/* Messaggio di errore */}
             {error && (
                 <div className="error-message">
                     {error}
                 </div>
             )}
 
-            {/* Statistiche */}
             <div className="stats-grid">
                 <div className="stat-card total">
                     <div className="stat-icon">📊</div>
                     <div className="stat-info">
-                        <span className="stat-value">{categorie.length}</span>
-                        <span className="stat-label">Categorie Totali</span>
+                        <span className="stat-value">{clienti.length}</span>
+                        <span className="stat-label">Clienti Totali</span>
                     </div>
                 </div>
             </div>
 
-            {/* Tabella categorie */}
             <div className="categorie-table-section">
                 <div className="table-header">
                     <span className="table-icon">📄</span>
-                    <h3>Elenco Categorie</h3>
+                    <h3>Elenco Clienti</h3>
                 </div>
 
-                {categorie.length === 0 ? (
+                {clienti.length === 0 ? (
                     <div className="empty-state">
                         <div className="empty-state-icon">📂</div>
-                        <h3>Nessuna categoria trovata</h3>
-                        <p>Non ci sono categorie di permesso nel sistema.</p>
+                        <h3>Nessun cliente trovato</h3>
+                        <p>Non ci sono clienti nel sistema.</p>
                         <button className="btn-primary mt-3" onClick={handleOpenCreateModal}>
-                            Crea la prima categoria
+                            Crea il primo cliente
                         </button>
                     </div>
                 ) : (
@@ -221,34 +216,34 @@ const Categorie = () => {
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Descrizione</th>
+                                <th>Nominativo</th>
                                 <th>Azioni</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {categorie.map(categoria => (
-                                <tr key={categoria.CategoriaID}>
+                            {clienti.map(cliente => (
+                                <tr key={cliente.ClienteID}>
                                     <td>
                                         <span className="categoria-id">
-                                            {categoria.CategoriaID}
+                                            {cliente.ClienteID}
                                         </span>
                                     </td>
                                     <td className="descrizione-cell">
-                                        {categoria.Descrizione}
+                                        {cliente.Nominativo}
                                     </td>
                                     <td>
                                         <div className="actions-cell">
                                             <button
                                                 className="btn-edit"
-                                                onClick={() => handleOpenEditModal(categoria)}
-                                                title="Modifica Categoria"
+                                                onClick={() => handleOpenEditModal(cliente)}
+                                                title="Modifica Cliente"
                                             >
                                                 ✏️ Modifica
                                             </button>
                                             <button
                                                 className="btn-delete"
-                                                onClick={() => handleDelete(categoria.CategoriaID)}
-                                                title="Elimina Categoria"
+                                                onClick={() => handleDelete(cliente.ClienteID)}
+                                                title="Elimina Cliente"
                                             >
                                                 🗑️ Elimina
                                             </button>
@@ -261,7 +256,6 @@ const Categorie = () => {
                 )}
             </div>
 
-            {/* Modal per creazione/modifica */}
             {showModal && (
                 <div className="modal-overlay" onClick={handleCloseModal}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -270,7 +264,7 @@ const Categorie = () => {
                                 <span className="modal-icon">
                                     {editMode ? '✏️' : '➕'}
                                 </span>
-                                {editMode ? 'Modifica Categoria' : 'Nuova Categoria'}
+                                {editMode ? 'Modifica Cliente' : 'Nuovo Cliente'}
                             </h2>
                             <button
                                 className="modal-close"
@@ -284,11 +278,11 @@ const Categorie = () => {
                         <form onSubmit={editMode ? handleUpdate : handleCreate} className="categoria-form">
                             {!editMode && (
                                 <div className="form-group">
-                                    <label>ID Categoria *</label>
+                                    <label>ID Cliente *</label>
                                     <input
                                         type="number"
-                                        value={formData.categoriaId}
-                                        onChange={(e) => setFormData({ ...formData, categoriaId: e.target.value })}
+                                        value={formData.clienteId}
+                                        onChange={(e) => setFormData({ ...formData, clienteId: e.target.value })}
                                         placeholder="Es: 1"
                                         required
                                         min="1"
@@ -299,10 +293,10 @@ const Categorie = () => {
 
                             {editMode && (
                                 <div className="form-group">
-                                    <label>ID Categoria</label>
+                                    <label>ID Cliente</label>
                                     <input
                                         type="text"
-                                        value={formData.categoriaId}
+                                        value={formData.clienteId}
                                         disabled
                                         className="disabled-input"
                                     />
@@ -311,16 +305,16 @@ const Categorie = () => {
                             )}
 
                             <div className="form-group">
-                                <label>Descrizione *</label>
+                                <label>Nominativo *</label>
                                 <input
                                     type="text"
-                                    value={formData.descrizione}
-                                    onChange={(e) => setFormData({ ...formData, descrizione: e.target.value })}
-                                    placeholder="Es: Ferie, Malattia, Permesso Personale"
+                                    value={formData.nominativo}
+                                    onChange={(e) => setFormData({ ...formData, nominativo: e.target.value })}
+                                    placeholder="Es: Mario Rossi"
                                     required
                                     maxLength="200"
                                 />
-                                <small className="form-hint">Massimo 200 caratteri</small>
+                                <small className="form-hint">Inserisci il nominativo completo del cliente</small>
                             </div>
 
                             <div className="form-actions">
@@ -335,7 +329,7 @@ const Categorie = () => {
                                     type="submit"
                                     className="btn-primary"
                                 >
-                                    {editMode ? 'Salva Modifiche' : 'Crea Categoria'}
+                                    {editMode ? 'Salva Modifiche' : 'Crea Cliente'}
                                 </button>
                             </div>
                         </form>
@@ -346,4 +340,5 @@ const Categorie = () => {
     );
 };
 
-export default Categorie;
+export default Clienti;
+

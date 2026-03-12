@@ -6,7 +6,7 @@
 // =================================================
 
 const API_BASE_URL = import.meta.env.PROD
-    ? "https://prova-esame-s1-backend.onrender.com"
+    ? "https://prova-esame-corrieri-backend.vercel.app"
     : "http://localhost:3000";
 
 /**
@@ -119,15 +119,15 @@ export const logoutUser = async () => {
 };
 
 // =================================================
-// API PER LA GESTIONE DEI PERMESSI
+// API PER LA GESTIONE CLIENTI (CORRIERE)
 // =================================================
 
 /**
- * Ottieni tutte le categorie di permesso
- * @returns {Promise<Object>} - Lista delle categorie
+ * Ottieni tutti i clienti
+ * @returns {Promise<Object>} - Lista dei clienti
  */
-export const getCategorie = async () => {
-    const response = await fetch(`${API_BASE_URL}/categorie`, {
+export const getClienti = async () => {
+    const response = await fetch(`${API_BASE_URL}/clienti`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -138,12 +138,12 @@ export const getCategorie = async () => {
 };
 
 /**
- * Ottieni una singola categoria di permesso
- * @param {number} id - ID della categoria
- * @returns {Promise<Object>} - Dettagli della categoria
+ * Ottieni un singolo cliente
+ * @param {number} id - ID del cliente
+ * @returns {Promise<Object>} - Dettaglio del cliente
  */
-export const getCategoria = async (id) => {
-    const response = await fetch(`${API_BASE_URL}/categorie/${id}`, {
+export const getCliente = async (id) => {
+    const response = await fetch(`${API_BASE_URL}/clienti/${id}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -154,50 +154,47 @@ export const getCategoria = async (id) => {
 };
 
 /**
- * Crea una nuova categoria di permesso (solo Responsabile)
- * @param {Object} categoriaData - Dati della categoria
- * @param {number} categoriaData.categoriaId - ID della categoria
- * @param {string} categoriaData.descrizione - Descrizione della categoria
- * @returns {Promise<Object>} - Categoria creata
+ * Crea un nuovo cliente
+ * @param {Object} clienteData
+ * @param {number} clienteData.clienteId - ID del cliente
+ * @param {string} clienteData.nominativo - Nominativo del cliente
  */
-export const createCategoria = async (categoriaData) => {
-    const response = await fetch(`${API_BASE_URL}/categorie`, {
+export const createCliente = async (clienteData) => {
+    const response = await fetch(`${API_BASE_URL}/clienti`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         credentials: 'include',
-        body: JSON.stringify(categoriaData),
+        body: JSON.stringify(clienteData),
     });
     return handleResponse(response);
 };
 
 /**
- * Modifica una categoria di permesso esistente (solo Responsabile)
- * @param {number} id - ID della categoria
- * @param {Object} categoriaData - Dati aggiornati della categoria
- * @param {string} categoriaData.descrizione - Nuova descrizione
- * @returns {Promise<Object>} - Categoria modificata
+ * Aggiorna un cliente esistente
+ * @param {number} id - ID del cliente
+ * @param {Object} clienteData
+ * @param {string} clienteData.nominativo - Nuovo nominativo
  */
-export const updateCategoria = async (id, categoriaData) => {
-    const response = await fetch(`${API_BASE_URL}/categorie/${id}`, {
+export const updateCliente = async (id, clienteData) => {
+    const response = await fetch(`${API_BASE_URL}/clienti/${id}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
         },
         credentials: 'include',
-        body: JSON.stringify(categoriaData),
+        body: JSON.stringify(clienteData),
     });
     return handleResponse(response);
 };
 
 /**
- * Elimina una categoria di permesso (solo Responsabile)
- * @param {number} id - ID della categoria da eliminare
- * @returns {Promise<Object>} - Messaggio di conferma
+ * Elimina un cliente
+ * @param {number} id - ID del cliente
  */
-export const deleteCategoria = async (id) => {
-    const response = await fetch(`${API_BASE_URL}/categorie/${id}`, {
+export const deleteCliente = async (id) => {
+    const response = await fetch(`${API_BASE_URL}/clienti/${id}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
@@ -207,199 +204,96 @@ export const deleteCategoria = async (id) => {
     return handleResponse(response);
 };
 
+// =================================================
+// API PER LA GESTIONE CONSEGNE (CORRIERE)
+// =================================================
+
 /**
- * Ottieni tutte le richieste di permesso (con filtri opzionali)
- * @param {Object} filters - Filtri per le richieste
- * @param {number} [filters.utenteId] - ID utente
- * @param {string} [filters.stato] - Stato della richiesta
- * @param {number} [filters.categoriaId] - ID categoria
- * @returns {Promise<Object>} - Lista delle richieste
+ * Ottieni l'elenco delle consegne con filtri opzionali
+ * @param {Object} filters
+ * @param {number} [filters.clienteId]
+ * @param {string} [filters.stato]
  */
-export const getPermessi = async (filters = {}) => {
+export const getConsegne = async (filters = {}) => {
     const params = new URLSearchParams();
-    if (filters.utenteId) params.append('utenteId', filters.utenteId);
+    if (filters.clienteId) params.append('clienteId', filters.clienteId);
     if (filters.stato) params.append('stato', filters.stato);
-    if (filters.categoriaId) params.append('categoriaId', filters.categoriaId);
-
-    const queryString = params.toString();
-    const url = queryString ? `${API_BASE_URL}/permessi?${queryString}` : `${API_BASE_URL}/permessi`;
-
-    const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-    });
-    return handleResponse(response);
-};
-
-/**
- * Ottieni una singola richiesta di permesso
- * @param {number} id - ID della richiesta
- * @returns {Promise<Object>} - Dettagli della richiesta
- */
-export const getPermesso = async (id) => {
-    const response = await fetch(`${API_BASE_URL}/permessi/${id}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-    });
-    return handleResponse(response);
-};
-
-/**
- * Crea una nuova richiesta di permesso
- * @param {Object} permesso - Dati della richiesta
- * @param {string} permesso.dataInizio - Data di inizio
- * @param {string} permesso.dataFine - Data di fine
- * @param {number} permesso.categoriaId - ID categoria
- * @param {string} [permesso.motivazione] - Motivazione
- * @param {number} permesso.utenteId - ID utente richiedente
- * @returns {Promise<Object>} - Richiesta creata
- */
-export const createPermesso = async (permesso) => {
-    const response = await fetch(`${API_BASE_URL}/permessi`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify(permesso),
-    });
-    return handleResponse(response);
-};
-
-/**
- * Modifica una richiesta di permesso (solo se propria e in attesa)
- * @param {number} id - ID della richiesta
- * @param {Object} permesso - Dati aggiornati
- * @param {string} permesso.dataInizio - Data di inizio
- * @param {string} permesso.dataFine - Data di fine
- * @param {number} permesso.categoriaId - ID categoria
- * @param {string} [permesso.motivazione] - Motivazione
- * @returns {Promise<Object>} - Richiesta aggiornata
- */
-export const updatePermesso = async (id, permesso) => {
-    const response = await fetch(`${API_BASE_URL}/permessi/${id}`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify(permesso),
-    });
-    return handleResponse(response);
-};
-
-/**
- * Valuta una richiesta di permesso (approva o rifiuta)
- * @param {number} id - ID della richiesta
- * @param {string} stato - 'Approvato' o 'Rifiutato'
- * @param {number} utenteValutazioneId - ID del responsabile che valuta
- * @returns {Promise<Object>} - Richiesta aggiornata
- */
-export const valutaPermesso = async (id, stato, utenteValutazioneId) => {
-    const response = await fetch(`${API_BASE_URL}/permessi/${id}/valuta`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({ stato, utenteValutazioneId }),
-    });
-    return handleResponse(response);
-};
-
-/**
- * Elimina una richiesta di permesso
- * Dipendenti: solo se propria e in attesa
- * Responsabili: possono eliminare anche richieste approvate
- * @param {number} id - ID della richiesta
- * @returns {Promise<Object>} - Messaggio di conferma
- */
-export const deletePermesso = async (id) => {
-    const response = await fetch(`${API_BASE_URL}/permessi/${id}`, {
-        method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-    });
-    return handleResponse(response);
-};
-
-/**
- * Ottieni elenco richieste da approvare (solo per Responsabili)
- * @returns {Promise<Object>} - Lista delle richieste in attesa
- */
-export const getRichiesteDaApprovare = async () => {
-    const response = await fetch(`${API_BASE_URL}/permessi/da-approvare`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-    });
-    return handleResponse(response);
-};
-
-/**
- * Approva una richiesta di permesso (solo Responsabili)
- * @param {number} id - ID della richiesta
- * @returns {Promise<Object>} - Richiesta approvata
- */
-export const approvaRichiesta = async (id) => {
-    const response = await fetch(`${API_BASE_URL}/permessi/${id}/approva`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-    });
-    return handleResponse(response);
-};
-
-/**
- * Rifiuta una richiesta di permesso (solo Responsabili)
- * @param {number} id - ID della richiesta
- * @returns {Promise<Object>} - Richiesta rifiutata
- */
-export const rifiutaRichiesta = async (id) => {
-    const response = await fetch(`${API_BASE_URL}/permessi/${id}/rifiuta`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-    });
-    return handleResponse(response);
-};
-
-/**
- * Ottieni statistiche aggregate delle richieste approvate (solo Responsabili)
- * Requisito Avanzato: Visualizzazione aggregata con numero totale di giorni
- * @param {Object} filters - Filtri opzionali
- * @param {number} [filters.utenteId] - ID utente/dipendente
- * @param {number} [filters.mese] - Mese (1-12)
- * @param {number} [filters.anno] - Anno (es: 2024)
- * @returns {Promise<Object>} - Statistiche aggregate per dipendente
- */
-export const getStatistiche = async (filters = {}) => {
-    const params = new URLSearchParams();
-    if (filters.utenteId) params.append('utenteId', filters.utenteId);
-    if (filters.mese) params.append('mese', filters.mese);
-    if (filters.anno) params.append('anno', filters.anno);
 
     const queryString = params.toString();
     const url = queryString
-        ? `${API_BASE_URL}/permessi/statistiche?${queryString}`
-        : `${API_BASE_URL}/permessi/statistiche`;
+        ? `${API_BASE_URL}/consegne?${queryString}`
+        : `${API_BASE_URL}/consegne`;
 
     const response = await fetch(url, {
         method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+    });
+    return handleResponse(response);
+};
+
+/**
+ * Ottieni i dettagli di una singola consegna
+ * @param {number} id - ID della consegna
+ */
+export const getConsegna = async (id) => {
+    const response = await fetch(`${API_BASE_URL}/consegne/${id}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+    });
+    return handleResponse(response);
+};
+
+/**
+ * Crea una nuova consegna
+ * @param {Object} consegna
+ * @param {number} consegna.clienteId
+ * @param {string} consegna.stato
+ * @param {string} consegna.chiaveConsegna
+ * @param {string} [consegna.dataRitiro]
+ * @param {string} [consegna.dataConsegna]
+ */
+export const createConsegna = async (consegna) => {
+    const response = await fetch(`${API_BASE_URL}/consegne`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(consegna),
+    });
+    return handleResponse(response);
+};
+
+/**
+ * Aggiorna una consegna esistente
+ * @param {number} id - ID della consegna
+ * @param {Object} consegna - Dati aggiornati
+ */
+export const updateConsegna = async (id, consegna) => {
+    const response = await fetch(`${API_BASE_URL}/consegne/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(consegna),
+    });
+    return handleResponse(response);
+};
+
+/**
+ * Elimina una consegna
+ * @param {number} id - ID della consegna
+ */
+export const deleteConsegna = async (id) => {
+    const response = await fetch(`${API_BASE_URL}/consegne/${id}`, {
+        method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
         },

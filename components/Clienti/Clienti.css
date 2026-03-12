@@ -1,8 +1,6 @@
 /* =================================================
-   File: Categorie.css
-   Stili per il componente Categorie
-   @author: Full Stack Senior Developer
-   @version: 1.0.0 2026-01-20
+   File: Clienti.css
+   Stili per il componente Clienti (layout Categorie)
    ================================================= */
 
 /* Container principale */
@@ -109,7 +107,7 @@
     color: #667eea;
 }
 
-/* Tabella categorie */
+/* Tabella */
 .categorie-table-section {
     background: white;
     border-radius: 10px;
@@ -236,7 +234,7 @@
     box-shadow: 0 4px 12px rgba(250, 112, 154, 0.3);
 }
 
-/* Pulsante primario */
+/* Pulsanti base */
 .btn-primary {
     padding: 0.6rem 1.5rem;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -589,3 +587,4 @@
         font-size: 0.8rem;
     }
 }
+

@@ -1,6 +1,7 @@
-/* ========================================
-   COMPONENTE PERMESSI - STILI MIGLIORATI
-   ======================================== */
+/* =================================================
+   File: Consegne.css
+   Stili per il componente Consegne (layout Permessi)
+   ================================================= */
 
 .permessi-container {
     padding: 2rem;
@@ -21,10 +22,7 @@
     }
 }
 
-/* ========================================
-   HEADER
-   ======================================== */
-
+/* HEADER */
 .permessi-header {
     display: flex;
     justify-content: space-between;
@@ -67,10 +65,7 @@
     font-weight: 300;
 }
 
-/* ========================================
-   STATISTICHE
-   ======================================== */
-
+/* STATISTICHE */
 .stats-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -149,10 +144,7 @@
     color: #dc3545;
 }
 
-/* ========================================
-   FILTRI
-   ======================================== */
-
+/* FILTRI */
 .filters-container {
     background: white;
     padding: 0.75rem 1rem;
@@ -245,10 +237,7 @@
     transform: translateY(-2px);
 }
 
-/* ========================================
-   TABELLA
-   ======================================== */
-
+/* TABELLA */
 .table-wrapper {
     background: white;
     border-radius: 12px;
@@ -339,10 +328,7 @@
     font-style: italic;
 }
 
-/* ========================================
-   BOTTONI
-   ======================================== */
-
+/* BOTTONI */
 .btn-primary,
 .btn-success,
 .btn-danger,
@@ -405,10 +391,7 @@
     font-size: 1.2rem;
 }
 
-/* ========================================
-   LOADING E EMPTY STATE
-   ======================================== */
-
+/* LOADING / EMPTY */
 .loading-state {
     display: flex;
     flex-direction: column;
@@ -479,10 +462,7 @@
     margin-bottom: 2rem;
 }
 
-/* ========================================
-   MODAL
-   ======================================== */
-
+/* MODAL */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -565,10 +545,7 @@
     transform: rotate(90deg);
 }
 
-/* ========================================
-   FORM
-   ======================================== */
-
+/* FORM */
 .permesso-form {
     padding: 2rem;
 }
@@ -638,10 +615,7 @@
     border-top: 2px solid #e9ecef;
 }
 
-/* ========================================
-   RESPONSIVE
-   ======================================== */
-
+/* RESPONSIVE */
 @media (max-width: 768px) {
     .permessi-container {
         padding: 1rem;
@@ -690,3 +664,4 @@
         width: 100%;
     }
 }
+

@@ -9,9 +9,8 @@ import { useState } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from '../components/Login/Login';
 import Registration from '../components/Registration/Registration';
-import Permessi from '../components/Permessi/Permessi';
-import Categorie from '../components/Categorie/Categorie';
-import Statistiche from '../components/Statistiche/Statistiche';
+import Consegne from '../components/Consegne/Consegne';
+import Clienti from '../components/Clienti/Clienti';
 import './App.css';
 
 /**
@@ -19,13 +18,13 @@ import './App.css';
  */
 const Dashboard = () => {
   const { user, logout } = useAuth();
-  const [currentPage, setCurrentPage] = useState('home'); // 'home', 'permessi', 'categorie', 'statistiche'
+  const [currentPage, setCurrentPage] = useState('home'); // 'home', 'consegne', 'clienti'
 
   return (
     <div className="dashboard">
       <div className="dashboard-header">
         <div className="header-left">
-          <h1>Sistema Gestione Permessi</h1>
+          <h1>Sistema Gestione Consegne</h1>
         </div>
         <div className="header-right">
           <span className="user-name">👤 {user?.nome} {user?.cognome}</span>
@@ -44,24 +43,18 @@ const Dashboard = () => {
           🏠 Home
         </button>
         <button
-          className={`nav-item ${currentPage === 'permessi' ? 'active' : ''}`}
-          onClick={() => setCurrentPage('permessi')}
+          className={`nav-item ${currentPage === 'consegne' ? 'active' : ''}`}
+          onClick={() => setCurrentPage('consegne')}
         >
-          📋 Permessi
+          🚚 Consegne
         </button>
-        {user?.ruolo === 'Responsabile' && (
+        {user?.ruolo === 'Amministratore' && (
           <>
             <button
-              className={`nav-item ${currentPage === 'categorie' ? 'active' : ''}`}
-              onClick={() => setCurrentPage('categorie')}
+              className={`nav-item ${currentPage === 'clienti' ? 'active' : ''}`}
+              onClick={() => setCurrentPage('clienti')}
             >
-              🏷️ Categorie
-            </button>
-            <button
-              className={`nav-item ${currentPage === 'statistiche' ? 'active' : ''}`}
-              onClick={() => setCurrentPage('statistiche')}
-            >
-              📊 Statistiche
+              👥 Clienti
             </button>
           </>
         )}
@@ -95,33 +88,26 @@ const Dashboard = () => {
             <div className="quick-actions">
               <h3>Azioni Rapide</h3>
               <button
-                className="btn-action"
-                onClick={() => setCurrentPage('permessi')}
-              >
-                📋 Vai a Gestione Permessi →
+                    className="btn-action"
+                    onClick={() => setCurrentPage('consegne')}
+                  >
+                    🚚 Vai a Gestione Consegne →
               </button>
-              {user?.ruolo === 'Responsabile' && (
+              {user?.ruolo === 'Amministratore' && (
                 <>
                   <button
                     className="btn-action"
-                    onClick={() => setCurrentPage('categorie')}
+                    onClick={() => setCurrentPage('clienti')}
                   >
-                    🏷️ Vai a Gestione Categorie →
-                  </button>
-                  <button
-                    className="btn-action"
-                    onClick={() => setCurrentPage('statistiche')}
-                  >
-                    📊 Vai a Statistiche →
+                    👥 Vai a Gestione Clienti →
                   </button>
                 </>
               )}
             </div>
           </div>
         )}
-        {currentPage === 'permessi' && <Permessi />}
-        {currentPage === 'categorie' && <Categorie />}
-        {currentPage === 'statistiche' && <Statistiche />}
+        {currentPage === 'consegne' && <Consegne />}
+        {currentPage === 'clienti' && <Clienti />}
       </div>
     </div>
   );
