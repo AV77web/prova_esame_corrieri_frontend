@@ -22,8 +22,13 @@ const Clienti = () => {
     const [editMode, setEditMode] = useState(false);
     const [currentCliente, setCurrentCliente] = useState(null);
     const [formData, setFormData] = useState({
-        clienteId: '',
-        nominativo: ''
+        nominativo: '',
+        via: '',
+        comune: '',
+        provincia: '',
+        telefono: '',
+        email: '',
+        note: ''
     });
 
     const canGestireClienti =
@@ -56,7 +61,15 @@ const Clienti = () => {
     const handleOpenCreateModal = () => {
         setEditMode(false);
         setCurrentCliente(null);
-        setFormData({ clienteId: '', nominativo: '' });
+        setFormData({
+            nominativo: '',
+            via: '',
+            comune: '',
+            provincia: '',
+            telefono: '',
+            email: '',
+            note: ''
+        });
         setShowModal(true);
     };
 
@@ -64,8 +77,13 @@ const Clienti = () => {
         setEditMode(true);
         setCurrentCliente(cliente);
         setFormData({
-            clienteId: cliente.ClienteID,
-            nominativo: cliente.Nominativo
+            nominativo: cliente.Nominativo || '',
+            via: cliente.Via || '',
+            comune: cliente.Comune || '',
+            provincia: cliente.Provincia || '',
+            telefono: cliente.Telefono || '',
+            email: cliente.Email || '',
+            note: cliente.Note || ''
         });
         setShowModal(true);
     };
@@ -74,22 +92,35 @@ const Clienti = () => {
         setShowModal(false);
         setEditMode(false);
         setCurrentCliente(null);
-        setFormData({ clienteId: '', nominativo: '' });
+        setFormData({
+            nominativo: '',
+            via: '',
+            comune: '',
+            provincia: '',
+            telefono: '',
+            email: '',
+            note: ''
+        });
     };
 
     const handleCreate = async (e) => {
         e.preventDefault();
 
-        if (!formData.clienteId || !formData.nominativo) {
-            setError('Tutti i campi sono obbligatori');
+        if (!formData.nominativo || !formData.via) {
+            setError('Nominativo e indirizzo sono obbligatori');
             return;
         }
 
         try {
             setError(null);
             await createCliente({
-                clienteId: parseInt(formData.clienteId, 10),
-                nominativo: formData.nominativo
+                nominativo: formData.nominativo,
+                via: formData.via,
+                comune: formData.comune,
+                provincia: formData.provincia,
+                telefono: formData.telefono,
+                email: formData.email,
+                note: formData.note
             });
 
             handleCloseModal();
@@ -103,15 +134,21 @@ const Clienti = () => {
     const handleUpdate = async (e) => {
         e.preventDefault();
 
-        if (!formData.nominativo) {
-            setError('Il nominativo è obbligatorio');
+        if (!formData.nominativo || !formData.via) {
+            setError('Nominativo e indirizzo sono obbligatori');
             return;
         }
 
         try {
             setError(null);
             await updateCliente(currentCliente.ClienteID, {
-                nominativo: formData.nominativo
+                nominativo: formData.nominativo,
+                via: formData.via,
+                comune: formData.comune,
+                provincia: formData.provincia,
+                telefono: formData.telefono,
+                email: formData.email,
+                note: formData.note
             });
 
             handleCloseModal();
@@ -217,6 +254,11 @@ const Clienti = () => {
                             <tr>
                                 <th>ID</th>
                                 <th>Nominativo</th>
+                                <th>Indirizzo</th>
+                                <th>Comune</th>
+                                <th>Provincia</th>
+                                <th>Telefono</th>
+                                <th>Email</th>
                                 <th>Azioni</th>
                             </tr>
                         </thead>
@@ -231,6 +273,11 @@ const Clienti = () => {
                                     <td className="descrizione-cell">
                                         {cliente.Nominativo}
                                     </td>
+                                    <td>{cliente.Via}</td>
+                                    <td>{cliente.Comune}</td>
+                                    <td>{cliente.Provincia}</td>
+                                    <td>{cliente.Telefono}</td>
+                                    <td>{cliente.Email}</td>
                                     <td>
                                         <div className="actions-cell">
                                             <button
@@ -276,34 +323,6 @@ const Clienti = () => {
                         </div>
 
                         <form onSubmit={editMode ? handleUpdate : handleCreate} className="categoria-form">
-                            {!editMode && (
-                                <div className="form-group">
-                                    <label>ID Cliente *</label>
-                                    <input
-                                        type="number"
-                                        value={formData.clienteId}
-                                        onChange={(e) => setFormData({ ...formData, clienteId: e.target.value })}
-                                        placeholder="Es: 1"
-                                        required
-                                        min="1"
-                                    />
-                                    <small className="form-hint">Inserisci un numero identificativo univoco</small>
-                                </div>
-                            )}
-
-                            {editMode && (
-                                <div className="form-group">
-                                    <label>ID Cliente</label>
-                                    <input
-                                        type="text"
-                                        value={formData.clienteId}
-                                        disabled
-                                        className="disabled-input"
-                                    />
-                                    <small className="form-hint">L'ID non può essere modificato</small>
-                                </div>
-                            )}
-
                             <div className="form-group">
                                 <label>Nominativo *</label>
                                 <input
@@ -315,6 +334,67 @@ const Clienti = () => {
                                     maxLength="200"
                                 />
                                 <small className="form-hint">Inserisci il nominativo completo del cliente</small>
+                            </div>
+
+                            <div className="form-group">
+                                <label>Via *</label>
+                                <input
+                                    type="text"
+                                    value={formData.via}
+                                    onChange={(e) => setFormData({ ...formData, via: e.target.value })}
+                                    placeholder="Es: Via Roma 10"
+                                    required
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>Comune</label>
+                                <input
+                                    type="text"
+                                    value={formData.comune}
+                                    onChange={(e) => setFormData({ ...formData, comune: e.target.value })}
+                                    placeholder="Es: Milano"
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>Provincia</label>
+                                <input
+                                    type="text"
+                                    value={formData.provincia}
+                                    onChange={(e) => setFormData({ ...formData, provincia: e.target.value })}
+                                    placeholder="Es: MI"
+                                    maxLength={2}
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>Telefono</label>
+                                <input
+                                    type="text"
+                                    value={formData.telefono}
+                                    onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
+                                    placeholder="Es: 039..."
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>Email</label>
+                                <input
+                                    type="email"
+                                    value={formData.email}
+                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                    placeholder="email@cliente.it"
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>Note</label>
+                                <textarea
+                                    value={formData.note}
+                                    onChange={(e) => setFormData({ ...formData, note: e.target.value })}
+                                    rows={3}
+                                />
                             </div>
 
                             <div className="form-actions">
