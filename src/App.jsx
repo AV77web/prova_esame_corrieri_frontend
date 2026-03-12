@@ -27,7 +27,7 @@ const Dashboard = () => {
           <h1>Sistema Gestione Consegne</h1>
         </div>
         <div className="header-right">
-          <span className="user-name">👤 {user?.nome} {user?.cognome}</span>
+          <span className="user-name">👤 {user?.email}</span>
           <button onClick={logout} className="btn-logout">
             Logout
           </button>
@@ -65,14 +65,6 @@ const Dashboard = () => {
         {currentPage === 'home' && (
           <div className="user-info-card">
             <h2>Informazioni Utente</h2>
-            <div className="info-row">
-              <span className="info-label">Nome:</span>
-              <span className="info-value">{user?.nome}</span>
-            </div>
-            <div className="info-row">
-              <span className="info-label">Cognome:</span>
-              <span className="info-value">{user?.cognome}</span>
-            </div>
             <div className="info-row">
               <span className="info-label">Email:</span>
               <span className="info-value">{user?.email}</span>

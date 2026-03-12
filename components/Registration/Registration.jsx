@@ -11,12 +11,10 @@ import './Registration.css';
 
 const Registration = ({ onSwitchToLogin, onRegistrationSuccess }) => {
     const [formData, setFormData] = useState({
-        nome: '',
-        cognome: '',
         email: '',
         password: '',
         confirmPassword: '',
-        ruolo: 'Dipendente'
+        ruolo: 'Operatore'
     });
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false);
@@ -51,20 +49,6 @@ const Registration = ({ onSwitchToLogin, onRegistrationSuccess }) => {
     const validateForm = () => {
         const newErrors = {};
 
-        // Validazione nome
-        if (!formData.nome.trim()) {
-            newErrors.nome = 'Il nome è obbligatorio';
-        } else if (formData.nome.trim().length < 2) {
-            newErrors.nome = 'Il nome deve contenere almeno 2 caratteri';
-        }
-
-        // Validazione cognome
-        if (!formData.cognome.trim()) {
-            newErrors.cognome = 'Il cognome è obbligatorio';
-        } else if (formData.cognome.trim().length < 2) {
-            newErrors.cognome = 'Il cognome deve contenere almeno 2 caratteri';
-        }
-
         // Validazione email
         if (!formData.email) {
             newErrors.email = 'L\'email è obbligatoria';
@@ -86,10 +70,10 @@ const Registration = ({ onSwitchToLogin, onRegistrationSuccess }) => {
             newErrors.confirmPassword = 'Le password non corrispondono';
         }
 
-        // Validazione ruolo
+        // Validazione ruolo (mappato su flag Admin lato backend)
         if (!formData.ruolo) {
             newErrors.ruolo = 'Seleziona un ruolo';
-        } else if (formData.ruolo !== 'Dipendente' && formData.ruolo !== 'Responsabile') {
+        } else if (formData.ruolo !== 'Operatore' && formData.ruolo !== 'Amministratore') {
             newErrors.ruolo = 'Ruolo non valido';
         }
 
@@ -126,12 +110,10 @@ const Registration = ({ onSwitchToLogin, onRegistrationSuccess }) => {
 
             // Reset del form
             setFormData({
-                nome: '',
-                cognome: '',
                 email: '',
                 password: '',
                 confirmPassword: '',
-                ruolo: 'Dipendente'
+                ruolo: 'Operatore'
             });
 
             // Reindirizza al login dopo 2 secondi
@@ -154,8 +136,8 @@ const Registration = ({ onSwitchToLogin, onRegistrationSuccess }) => {
     return (
         <div className="registration-container">
             <div className="registration-card">
-                <h2 className="registration-title">Crea un account</h2>
-                <p className="registration-subtitle">Inserisci i tuoi dati per registrarti</p>
+                <h2 className="registration-title">Registrazione operatore</h2>
+                <p className="registration-subtitle">Crea un account per accedere al gestionale corriere</p>
 
                 <form onSubmit={handleSubmit} className="registration-form" noValidate>
                     {/* Messaggio di errore del server */}
@@ -177,51 +159,6 @@ const Registration = ({ onSwitchToLogin, onRegistrationSuccess }) => {
                             <span>{successMessage}</span>
                         </div>
                     )}
-
-                    {/* Riga con Nome e Cognome */}
-                    <div className="form-row">
-                        {/* Campo Nome */}
-                        <div className="form-group">
-                            <label htmlFor="nome" className="form-label">
-                                Nome
-                            </label>
-                            <input
-                                type="text"
-                                id="nome"
-                                name="nome"
-                                value={formData.nome}
-                                onChange={handleChange}
-                                className={`form-input ${errors.nome ? 'form-input-error' : ''}`}
-                                placeholder="Mario"
-                                disabled={isLoading}
-                                autoComplete="given-name"
-                            />
-                            {errors.nome && (
-                                <p className="form-error">{errors.nome}</p>
-                            )}
-                        </div>
-
-                        {/* Campo Cognome */}
-                        <div className="form-group">
-                            <label htmlFor="cognome" className="form-label">
-                                Cognome
-                            </label>
-                            <input
-                                type="text"
-                                id="cognome"
-                                name="cognome"
-                                value={formData.cognome}
-                                onChange={handleChange}
-                                className={`form-input ${errors.cognome ? 'form-input-error' : ''}`}
-                                placeholder="Rossi"
-                                disabled={isLoading}
-                                autoComplete="family-name"
-                            />
-                            {errors.cognome && (
-                                <p className="form-error">{errors.cognome}</p>
-                            )}
-                        </div>
-                    </div>
 
                     {/* Campo Email */}
                     <div className="form-group">
@@ -289,7 +226,7 @@ const Registration = ({ onSwitchToLogin, onRegistrationSuccess }) => {
                     {/* Campo Ruolo */}
                     <div className="form-group">
                         <label htmlFor="ruolo" className="form-label">
-                            Ruolo
+                            Ruolo nel sistema
                         </label>
                         <select
                             id="ruolo"
@@ -299,8 +236,8 @@ const Registration = ({ onSwitchToLogin, onRegistrationSuccess }) => {
                             className={`form-select ${errors.ruolo ? 'form-input-error' : ''}`}
                             disabled={isLoading}
                         >
-                            <option value="Dipendente">Dipendente</option>
-                            <option value="Responsabile">Responsabile</option>
+                            <option value="Operatore">Operatore</option>
+                            <option value="Amministratore">Amministratore</option>
                         </select>
                         {errors.ruolo && (
                             <p className="form-error">{errors.ruolo}</p>
