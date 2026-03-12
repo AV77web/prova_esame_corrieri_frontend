@@ -18,7 +18,7 @@ const Utenti = () => {
     const [formData, setFormData] = useState({
         email: '',
         password: '',
-        admin: false
+        ruolo: 'Operatore' // Operatore | Amministratore
     });
 
     const isAdmin = user?.ruolo === 'Amministratore';
@@ -50,7 +50,7 @@ const Utenti = () => {
         setFormData({
             email: '',
             password: '',
-            admin: false
+            ruolo: 'Operatore'
         });
         setShowModal(true);
     };
@@ -61,7 +61,7 @@ const Utenti = () => {
         setFormData({
             email: utente.Email,
             password: '',
-            admin: utente.Admin === true || utente.Admin === 'true' || utente.Admin === '1'
+            ruolo: (utente.Admin === true || utente.Admin === 'true' || utente.Admin === '1') ? 'Amministratore' : 'Operatore'
         });
         setShowModal(true);
     };
@@ -83,19 +83,21 @@ const Utenti = () => {
             return;
         }
 
+        const adminFlag = formData.ruolo === 'Amministratore';
+
         try {
             setError(null);
             if (editMode && currentUtente) {
                 await updateUtente(currentUtente.UtenteID, {
                     email: formData.email,
-                    admin: formData.admin,
+                    admin: adminFlag,
                     password: formData.password || undefined
                 });
             } else {
                 await createUtente({
                     email: formData.email,
                     password: formData.password,
-                    admin: formData.admin
+                    admin: adminFlag
                 });
             }
             handleClose();
@@ -241,14 +243,14 @@ const Utenti = () => {
                                 />
                             </div>
                             <div className="form-group">
-                                <label>
-                                    <input
-                                        type="checkbox"
-                                        checked={formData.admin}
-                                        onChange={(e) => setFormData({ ...formData, admin: e.target.checked })}
-                                    />{' '}
-                                    Amministratore
-                                </label>
+                                <label>Ruolo</label>
+                                <select
+                                    value={formData.ruolo}
+                                    onChange={(e) => setFormData({ ...formData, ruolo: e.target.value })}
+                                >
+                                    <option value="Operatore">Operatore</option>
+                                    <option value="Amministratore">Amministratore</option>
+                                </select>
                             </div>
                             <div className="form-actions">
                                 <button type="button" className="btn-secondary" onClick={handleClose}>

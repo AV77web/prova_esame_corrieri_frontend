@@ -10,7 +10,7 @@ import { useAuth } from '../../src/context/AuthContext';
 import { loginUser } from '../../src/services/api';
 import './Login.css';
 
-const Login = ({ onSwitchToRegister, onLoginSuccess }) => {
+const Login = ({ onSwitchToRegister, onLoginSuccess, onGoToTracking }) => {
     const { login } = useAuth();
     const [formData, setFormData] = useState({
         email: '',
@@ -177,7 +177,7 @@ const Login = ({ onSwitchToRegister, onLoginSuccess }) => {
                     </button>
                 </form>
 
-                {/* Link alla registrazione */}
+                {/* Link alla registrazione e al tracking */}
                 <div className="login-footer">
                     <p>
                         Non hai un account?{' '}
@@ -188,6 +188,17 @@ const Login = ({ onSwitchToRegister, onLoginSuccess }) => {
                             disabled={isLoading}
                         >
                             Registrati
+                        </button>
+                    </p>
+                    <p>
+                        Vuoi solo verificare una consegna?{' '}
+                        <button
+                            type="button"
+                            onClick={onGoToTracking}
+                            className="link-button"
+                            disabled={isLoading}
+                        >
+                            Vai al Tracking
                         </button>
                     </p>
                 </div>

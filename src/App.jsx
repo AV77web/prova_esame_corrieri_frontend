@@ -50,21 +50,21 @@ const Dashboard = () => {
         >
           🚚 Consegne
         </button>
+        {(user?.ruolo === 'Operatore' || user?.ruolo === 'Amministratore') && (
+          <button
+            className={`nav-item ${currentPage === 'clienti' ? 'active' : ''}`}
+            onClick={() => setCurrentPage('clienti')}
+          >
+            👥 Clienti
+          </button>
+        )}
         {user?.ruolo === 'Amministratore' && (
-          <>
-            <button
-              className={`nav-item ${currentPage === 'clienti' ? 'active' : ''}`}
-              onClick={() => setCurrentPage('clienti')}
-            >
-              👥 Clienti
-            </button>
-            <button
-              className={`nav-item ${currentPage === 'utenti' ? 'active' : ''}`}
-              onClick={() => setCurrentPage('utenti')}
-            >
-              🧑‍💼 Utenti
-            </button>
-          </>
+          <button
+            className={`nav-item ${currentPage === 'utenti' ? 'active' : ''}`}
+            onClick={() => setCurrentPage('utenti')}
+          >
+            🧑‍💼 Utenti
+          </button>
         )}
       </nav>
 
@@ -88,26 +88,26 @@ const Dashboard = () => {
             <div className="quick-actions">
               <h3>Azioni Rapide</h3>
               <button
-                    className="btn-action"
-                    onClick={() => setCurrentPage('consegne')}
-                  >
-                    🚚 Vai a Gestione Consegne →
+                className="btn-action"
+                onClick={() => setCurrentPage('consegne')}
+              >
+                🚚 Vai a Gestione Consegne →
               </button>
+              {(user?.ruolo === 'Operatore' || user?.ruolo === 'Amministratore') && (
+                <button
+                  className="btn-action"
+                  onClick={() => setCurrentPage('clienti')}
+                >
+                  👥 Vai a Gestione Clienti →
+                </button>
+              )}
               {user?.ruolo === 'Amministratore' && (
-              <>
-                  <button
-                    className="btn-action"
-                    onClick={() => setCurrentPage('clienti')}
-                  >
-                    👥 Vai a Gestione Clienti →
-                  </button>
-                  <button
-                    className="btn-action"
-                    onClick={() => setCurrentPage('utenti')}
-                  >
-                    🧑‍💼 Vai a Gestione Utenti →
-                  </button>
-                </>
+                <button
+                  className="btn-action"
+                  onClick={() => setCurrentPage('utenti')}
+                >
+                  🧑‍💼 Vai a Gestione Utenti →
+                </button>
               )}
             </div>
           </div>
@@ -125,7 +125,7 @@ const Dashboard = () => {
  */
 const AppContent = () => {
   const { isAuthenticated, loading } = useAuth();
-  const [currentView, setCurrentView] = useState('login'); // 'login' | 'register' | 'tracking'
+  const [currentView, setCurrentView] = useState('tracking'); // 'login' | 'register' | 'tracking'
 
   // Mostra uno spinner durante il caricamento iniziale
   if (loading) {
@@ -151,6 +151,7 @@ const AppContent = () => {
           onLoginSuccess={(user) => {
             console.log('Login completato per:', user);
           }}
+          onGoToTracking={() => setCurrentView('tracking')}
         />
       )}
       {currentView === 'register' && (
@@ -159,6 +160,7 @@ const AppContent = () => {
           onRegistrationSuccess={(user) => {
             console.log('Registrazione completata per:', user);
           }}
+          onGoToTracking={() => setCurrentView('tracking')}
         />
       )}
       {currentView === 'tracking' && <Tracking />}

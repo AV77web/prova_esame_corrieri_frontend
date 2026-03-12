@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { registerUser } from '../../src/services/api';
 import './Registration.css';
 
-const Registration = ({ onSwitchToLogin, onRegistrationSuccess }) => {
+const Registration = ({ onSwitchToLogin, onRegistrationSuccess, onGoToTracking }) => {
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -261,7 +261,7 @@ const Registration = ({ onSwitchToLogin, onRegistrationSuccess }) => {
                     </button>
                 </form>
 
-                {/* Link al login */}
+                {/* Link al login e al tracking */}
                 <div className="registration-footer">
                     <p>
                         Hai già un account?{' '}
@@ -272,6 +272,17 @@ const Registration = ({ onSwitchToLogin, onRegistrationSuccess }) => {
                             disabled={isLoading}
                         >
                             Accedi
+                        </button>
+                    </p>
+                    <p>
+                        Vuoi solo verificare una consegna?{' '}
+                        <button
+                            type="button"
+                            onClick={onGoToTracking}
+                            className="link-button"
+                            disabled={isLoading}
+                        >
+                            Vai al Tracking
                         </button>
                     </p>
                 </div>

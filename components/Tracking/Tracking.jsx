@@ -38,8 +38,17 @@ const Tracking = () => {
     return (
         <div className="tracking-container">
             <div className="tracking-card">
-                <h2>Tracking Consegna</h2>
-                <p>Inserisci la chiave di consegna e la data di ritiro per verificare lo stato della spedizione.</p>
+                <div className="tracking-header">
+                    <div className="tracking-header-left">
+                        <span className="tracking-icon">🚚</span>
+                        <div>
+                            <h2>Tracking Consegna</h2>
+                            <p className="tracking-subtitle">
+                                Inserisci la chiave di consegna e la data di ritiro per verificare lo stato della spedizione.
+                            </p>
+                        </div>
+                    </div>
+                </div>
 
                 <form onSubmit={handleSubmit} className="tracking-form">
                     {error && <div className="error-message">{error}</div>}
@@ -73,11 +82,32 @@ const Tracking = () => {
                 {result && (
                     <div className="tracking-result">
                         <h3>Esito Ricerca</h3>
-                        <p><strong>Cliente:</strong> {result.cliente}</p>
-                        <p><strong>Chiave:</strong> {result.chiaveConsegna}</p>
-                        <p><strong>Stato:</strong> {result.stato}</p>
-                        <p><strong>Data Ritiro:</strong> {result.dataRitiro ? new Date(result.dataRitiro).toLocaleDateString('it-IT') : '-'}</p>
-                        <p><strong>Data Consegna:</strong> {result.dataConsegna ? new Date(result.dataConsegna).toLocaleDateString('it-IT') : '-'}</p>
+                        <div className="tracking-result-grid">
+                            <div className="tracking-result-item">
+                                <span className="label">Cliente</span>
+                                <span className="value">{result.cliente}</span>
+                            </div>
+                            <div className="tracking-result-item">
+                                <span className="label">Chiave</span>
+                                <span className="value">{result.chiaveConsegna}</span>
+                            </div>
+                            <div className="tracking-result-item">
+                                <span className="label">Stato</span>
+                                <span className="value stato-value">{result.stato}</span>
+                            </div>
+                            <div className="tracking-result-item">
+                                <span className="label">Data Ritiro</span>
+                                <span className="value">
+                                    {result.dataRitiro ? new Date(result.dataRitiro).toLocaleDateString('it-IT') : '-'}
+                                </span>
+                            </div>
+                            <div className="tracking-result-item">
+                                <span className="label">Data Consegna</span>
+                                <span className="value">
+                                    {result.dataConsegna ? new Date(result.dataConsegna).toLocaleDateString('it-IT') : '-'}
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 )}
             </div>
