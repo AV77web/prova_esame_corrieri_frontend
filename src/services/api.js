@@ -156,8 +156,13 @@ export const getCliente = async (id) => {
 /**
  * Crea un nuovo cliente
  * @param {Object} clienteData
- * @param {number} clienteData.clienteId - ID del cliente
- * @param {string} clienteData.nominativo - Nominativo del cliente
+ * @param {string} clienteData.nominativo
+ * @param {string} clienteData.via
+ * @param {string} [clienteData.comune]
+ * @param {string} [clienteData.provincia]
+ * @param {string} [clienteData.telefono]
+ * @param {string} [clienteData.email]
+ * @param {string} [clienteData.note]
  */
 export const createCliente = async (clienteData) => {
     const response = await fetch(`${API_BASE_URL}/clienti`, {
@@ -298,6 +303,64 @@ export const deleteConsegna = async (id) => {
             'Content-Type': 'application/json',
         },
         credentials: 'include',
+    });
+    return handleResponse(response);
+};
+
+// =================================================
+// API PER LA GESTIONE UTENTI (solo Amministratore)
+// =================================================
+
+export const getUtenti = async () => {
+    const response = await fetch(`${API_BASE_URL}/utenti`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+    });
+    return handleResponse(response);
+};
+
+export const createUtente = async (utente) => {
+    const response = await fetch(`${API_BASE_URL}/utenti`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(utente),
+    });
+    return handleResponse(response);
+};
+
+export const updateUtente = async (id, utente) => {
+    const response = await fetch(`${API_BASE_URL}/utenti/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(utente),
+    });
+    return handleResponse(response);
+};
+
+export const deleteUtente = async (id) => {
+    const response = await fetch(`${API_BASE_URL}/utenti/${id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+    });
+    return handleResponse(response);
+};
+
+// =================================================
+// API DI TRACKING PUBBLICO
+// =================================================
+
+export const getTracking = async (chiaveConsegna, dataRitiro) => {
+    const params = new URLSearchParams();
+    if (chiaveConsegna) params.append('chiaveConsegna', chiaveConsegna);
+    if (dataRitiro) params.append('dataRitiro', dataRitiro);
+
+    const response = await fetch(`${API_BASE_URL}/tracking?${params.toString()}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
     });
     return handleResponse(response);
 };

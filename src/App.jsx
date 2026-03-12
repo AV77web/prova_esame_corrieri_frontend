@@ -11,6 +11,8 @@ import Login from '../components/Login/Login';
 import Registration from '../components/Registration/Registration';
 import Consegne from '../components/Consegne/Consegne';
 import Clienti from '../components/Clienti/Clienti';
+import Utenti from '../components/Utenti/Utenti';
+import Tracking from '../components/Tracking/Tracking';
 import './App.css';
 
 /**
@@ -18,7 +20,7 @@ import './App.css';
  */
 const Dashboard = () => {
   const { user, logout } = useAuth();
-  const [currentPage, setCurrentPage] = useState('home'); // 'home', 'consegne', 'clienti'
+  const [currentPage, setCurrentPage] = useState('home'); // 'home', 'consegne', 'clienti', 'utenti'
 
   return (
     <div className="dashboard">
@@ -56,6 +58,12 @@ const Dashboard = () => {
             >
               👥 Clienti
             </button>
+            <button
+              className={`nav-item ${currentPage === 'utenti' ? 'active' : ''}`}
+              onClick={() => setCurrentPage('utenti')}
+            >
+              🧑‍💼 Utenti
+            </button>
           </>
         )}
       </nav>
@@ -86,12 +94,18 @@ const Dashboard = () => {
                     🚚 Vai a Gestione Consegne →
               </button>
               {user?.ruolo === 'Amministratore' && (
-                <>
+              <>
                   <button
                     className="btn-action"
                     onClick={() => setCurrentPage('clienti')}
                   >
                     👥 Vai a Gestione Clienti →
+                  </button>
+                  <button
+                    className="btn-action"
+                    onClick={() => setCurrentPage('utenti')}
+                  >
+                    🧑‍💼 Vai a Gestione Utenti →
                   </button>
                 </>
               )}
@@ -100,6 +114,7 @@ const Dashboard = () => {
         )}
         {currentPage === 'consegne' && <Consegne />}
         {currentPage === 'clienti' && <Clienti />}
+        {currentPage === 'utenti' && <Utenti />}
       </div>
     </div>
   );
@@ -110,7 +125,7 @@ const Dashboard = () => {
  */
 const AppContent = () => {
   const { isAuthenticated, loading } = useAuth();
-  const [currentView, setCurrentView] = useState('login'); // 'login' o 'register'
+  const [currentView, setCurrentView] = useState('login'); // 'login' | 'register' | 'tracking'
 
   // Mostra uno spinner durante il caricamento iniziale
   if (loading) {
@@ -130,14 +145,15 @@ const AppContent = () => {
   // Altrimenti mostra login o registrazione
   return (
     <>
-      {currentView === 'login' ? (
+      {currentView === 'login' && (
         <Login
           onSwitchToRegister={() => setCurrentView('register')}
           onLoginSuccess={(user) => {
             console.log('Login completato per:', user);
           }}
         />
-      ) : (
+      )}
+      {currentView === 'register' && (
         <Registration
           onSwitchToLogin={() => setCurrentView('login')}
           onRegistrationSuccess={(user) => {
@@ -145,6 +161,27 @@ const AppContent = () => {
           }}
         />
       )}
+      {currentView === 'tracking' && <Tracking />}
+
+      <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+        {currentView !== 'tracking' ? (
+          <button
+            type="button"
+            className="link-button"
+            onClick={() => setCurrentView('tracking')}
+          >
+            🔍 Vai al Tracking Consegne
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="link-button"
+            onClick={() => setCurrentView('login')}
+          >
+            🔐 Torna al Login
+          </button>
+        )}
+      </div>
     </>
   );
 };
