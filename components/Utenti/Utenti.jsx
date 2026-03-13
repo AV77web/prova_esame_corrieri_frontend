@@ -11,7 +11,8 @@ const Utenti = () => {
     const { user } = useAuth();
     const [utenti, setUtenti] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [pageError, setPageError] = useState(null);
+    const [modalError, setModalError] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [editMode, setEditMode] = useState(false);
     const [currentUtente, setCurrentUtente] = useState(null);
@@ -26,11 +27,11 @@ const Utenti = () => {
     const loadUtenti = async () => {
         try {
             setLoading(true);
-            setError(null);
+            setPageError(null);
             const response = await getUtenti();
             setUtenti(response.data || response || []);
         } catch (err) {
-            setError(err.message);
+            setPageError(err.message);
         } finally {
             setLoading(false);
         }
@@ -52,6 +53,7 @@ const Utenti = () => {
             password: '',
             ruolo: 'Operatore'
         });
+        setModalError(null);
         setShowModal(true);
     };
 
@@ -63,6 +65,7 @@ const Utenti = () => {
             password: '',
             ruolo: (utente.Admin === true || utente.Admin === 'true' || utente.Admin === '1') ? 'Amministratore' : 'Operatore'
         });
+        setModalError(null);
         setShowModal(true);
     };
 
@@ -70,23 +73,24 @@ const Utenti = () => {
         setShowModal(false);
         setEditMode(false);
         setCurrentUtente(null);
+        setModalError(null);
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!formData.email) {
-            setError('Email obbligatoria');
+            setModalError('Email obbligatoria');
             return;
         }
         if (!editMode && !formData.password) {
-            setError('Password obbligatoria per un nuovo utente');
+            setModalError('Password obbligatoria per un nuovo utente');
             return;
         }
 
         const adminFlag = formData.ruolo === 'Amministratore';
 
         try {
-            setError(null);
+            setModalError(null);
             if (editMode && currentUtente) {
                 await updateUtente(currentUtente.UtenteID, {
                     email: formData.email,
@@ -103,18 +107,18 @@ const Utenti = () => {
             handleClose();
             loadUtenti();
         } catch (err) {
-            setError(err.message);
+            setModalError(err.message);
         }
     };
 
     const handleDelete = async (id) => {
         if (!window.confirm('Eliminare questo utente?')) return;
         try {
-            setError(null);
+            setPageError(null);
             await deleteUtente(id);
             loadUtenti();
         } catch (err) {
-            setError(err.message);
+            setPageError(err.message);
         }
     };
 
@@ -158,7 +162,7 @@ const Utenti = () => {
                 </button>
             </div>
 
-            {error && <div className="error-message">{error}</div>}
+            {pageError && <div className="error-message">{pageError}</div>}
 
             <div className="categorie-table-section">
                 <div className="table-header">
@@ -223,6 +227,7 @@ const Utenti = () => {
                                 ×
                             </button>
                         </div>
+                        {modalError && <div className="error-message">{modalError}</div>}
                         <form onSubmit={handleSubmit} className="categoria-form">
                             <div className="form-group">
                                 <label>Email *</label>
