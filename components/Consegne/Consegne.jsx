@@ -31,6 +31,7 @@ const Consegne = () => {
     const [showModal, setShowModal] = useState(false);
     const [editMode, setEditMode] = useState(false);
     const [currentConsegna, setCurrentConsegna] = useState(null);
+    const [modalError, setModalError] = useState(null);
     const [filtro, setFiltro] = useState({
         stato: '',
         clienteId: ''
@@ -83,6 +84,7 @@ const Consegne = () => {
     const handleOpenCreateModal = () => {
         setEditMode(false);
         setCurrentConsegna(null);
+        setModalError(null);
         setFormData({
             clienteId: '',
             dataRitiro: '',
@@ -96,6 +98,7 @@ const Consegne = () => {
     const handleOpenEditModal = (consegna) => {
         setEditMode(true);
         setCurrentConsegna(consegna);
+        setModalError(null);
         setFormData({
             clienteId: consegna.ClienteID,
             dataRitiro: consegna.DataRitiro ? consegna.DataRitiro.substring(0, 10) : '',
@@ -110,6 +113,7 @@ const Consegne = () => {
         setShowModal(false);
         setEditMode(false);
         setCurrentConsegna(null);
+        setModalError(null);
         setFormData({
             clienteId: '',
             dataRitiro: '',
@@ -123,12 +127,13 @@ const Consegne = () => {
         e.preventDefault();
 
         if (!formData.clienteId || !formData.stato || !formData.chiaveConsegna) {
-            setError('Cliente, stato e chiave consegna sono obbligatori');
+            setModalError('Cliente, stato e chiave consegna sono obbligatori');
             return;
         }
 
         try {
             setError(null);
+            setModalError(null);
 
             const payload = {
                 clienteId: parseInt(formData.clienteId, 10),
@@ -148,7 +153,14 @@ const Consegne = () => {
             loadData();
         } catch (err) {
             console.error('[CONSEGNE] Errore salvataggio:', err);
-            setError(err.message);
+
+            const msg = err?.message || 'Si è verificato un errore durante il salvataggio';
+            // Se l'errore riguarda una chiaveConsegna duplicata lo mostriamo dentro il modale
+            if (msg.toLowerCase().includes('chiaveconsegna')) {
+                setModalError(msg);
+            } else {
+                setError(msg);
+            }
         }
     };
 
@@ -428,6 +440,12 @@ const Consegne = () => {
                                 ×
                             </button>
                         </div>
+
+                        {modalError && (
+                            <div className="error-message" style={{ marginBottom: '16px' }}>
+                                {modalError}
+                            </div>
+                        )}
 
                         <form onSubmit={handleSaveConsegna} className="permesso-form">
                             <div className="form-group">
