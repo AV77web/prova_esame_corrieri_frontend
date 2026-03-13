@@ -179,7 +179,7 @@ const Login = ({ onSwitchToRegister, onLoginSuccess, onGoToTracking }) => {
 
                 {/* Link alla registrazione e al tracking */}
                 <div className="login-footer">
-                    <p>
+                    {/*<p>
                         Non hai un account?{' '}
                         <button
                             type="button"
@@ -189,7 +189,7 @@ const Login = ({ onSwitchToRegister, onLoginSuccess, onGoToTracking }) => {
                         >
                             Registrati
                         </button>
-                    </p>
+                    </p>*/}
                     <p>
                         Vuoi solo verificare una consegna?{' '}
                         <button
